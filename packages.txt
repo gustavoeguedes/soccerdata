@@ -1,3 +1,2 @@
-# Pacotes do sistema necessários (se houver)
-# Exemplo:
-# libgomp1
+libxml2-dev
+libxslt1-dev
