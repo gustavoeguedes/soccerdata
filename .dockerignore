@@ -1,0 +1,42 @@
+# Cache e dados locais
+cache/
+*.cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Outputs
+out/
+*.csv
+*.xlsx
+*.png
+*.jpg
+*.pdf
+
+# Ambiente virtual
+venv/
+env/
+ENV/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistema
+.DS_Store
+Thumbs.db
+.git/
+.gitignore
+
+# Logs
+*.log
+
+# Dados do soccerdata
+data/
+soccerdata/

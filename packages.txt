@@ -1,0 +1,3 @@
+# Pacotes do sistema necessários (se houver)
+# Exemplo:
+# libgomp1

@@ -1,0 +1,9 @@
+soccerdata
+pandas
+polars
+numpy
+pyarrow
+matplotlib
+openpyxl
+streamlit
+plotly
