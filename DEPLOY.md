@@ -1,5 +1,16 @@
 # ⚽ FBref Assists Analysis - Deploy Streamlit Cloud
 
+## ⚠️ **AVISO IMPORTANTE**
+
+**O FBref pode bloquear requisições do Streamlit Cloud** devido a políticas anti-scraping.
+
+**Recomendações:**
+- ✅ **Melhor opção**: Executar localmente com Docker ou `streamlit run streamlit_app.py`
+- ⚠️ **Streamlit Cloud**: Pode funcionar mas com limitações (apenas 1 liga, 1 temporada)
+- 🔧 **Alternativa**: Usar dados pré-carregados (CSV) em vez de scraping em tempo real
+
+---
+
 ## 📋 **GUIA DE DEPLOY NO STREAMLIT CLOUD**
 
 ### **✅ Pré-requisitos**

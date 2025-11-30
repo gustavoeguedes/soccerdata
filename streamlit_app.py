@@ -80,30 +80,41 @@ st.markdown("""
 def load_data():
     """Carregar e processar dados do FBref"""
     
-    # Configuração simplificada - usar formato de temporada curto
-    LEAGUES = [
-        'ENG-Premier League',
-        'ESP-La Liga',
-        'FRA-Ligue 1',
-        'GER-Bundesliga',
-        'ITA-Serie A'
-    ]
-    SEASONS = ['1718', '1819', '1920', '2021', '2122', '2223', '2324', '2425']
+    # Configuração simplificada - APENAS temporada atual para evitar timeouts
+    LEAGUES = ['ENG-Premier League']  # Apenas Premier League para teste
+    SEASONS = ['2324']  # Apenas 2023-24
     
     try:
+        # Configurar com no_cache=False para usar cache local
         fbref = sd.FBref(
             leagues=LEAGUES,
-            seasons=SEASONS
+            seasons=SEASONS,
+            no_cache=False
         )
+        
+        st.info("🔄 Carregando dados do FBref... Isso pode demorar alguns minutos na primeira vez.")
         
         player_season_stats = fbref.read_player_season_stats(stat_type="standard")
         
         # Validar se não está vazio
         if len(player_season_stats) == 0:
             st.error("❌ Nenhum dado foi carregado do FBref. Verifique a conexão.")
+            st.warning("⚠️ O FBref pode estar bloqueando requisições do Streamlit Cloud.")
+            st.info("💡 **Solução**: Execute localmente com `streamlit run streamlit_app.py` ou use Docker.")
             return None
     except Exception as e:
         st.error(f"❌ Erro ao carregar dados: {e}")
+        st.warning("⚠️ **Possíveis causas:**")
+        st.markdown("""
+        - FBref bloqueou requisições do Streamlit Cloud
+        - Timeout na conexão (servidor sobrecarregado)
+        - Rate limiting do FBref
+        
+        **Soluções:**
+        1. ✅ Execute localmente: `streamlit run streamlit_app.py`
+        2. ✅ Use Docker: `docker run --rm -v $(pwd):/app soccerdata-app`
+        3. ✅ Aguarde alguns minutos e recarregue
+        """)
         return None
     
     # Processar colunas (com fallback robusto)
