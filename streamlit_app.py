@@ -215,9 +215,9 @@ if stats is None or len(stats) == 0:
     st.info("💡 Tente recarregar a página (F5) ou limpar o cache.")
     st.stop()
 
-# Converter para pandas para facilitar filtros
+# Usar dados diretamente (já é pandas)
 try:
-    stats_pd = stats.to_pandas()
+    stats_pd = stats.copy()
     
     # Validar se tem dados
     if len(stats_pd) == 0:
