@@ -5,7 +5,6 @@ Análise de Assists vs Expected Assists (xAG)
 
 import streamlit as st
 import soccerdata as sd
-import polars as pl
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -155,28 +154,27 @@ def load_data():
             df = player_season_stats.iloc[:, selected_indices].copy()
             df.columns = ['position', 'matches', 'minutes', 'assists', 'xAG']
         
-        df_polars = pl.from_pandas(df, include_index=True)
+        # Resetar index para ter acesso a league, team, player
+        df = df.reset_index()
         
-        # Agregar dados
-        stats = (
-            df_polars
-            .group_by("league", "team", "player")
-            .agg([
-                pl.col("matches").sum().alias("matches"),
-                pl.col("assists").sum().alias("assists"),
-                pl.col("xAG").sum().alias("xAG"),
-                pl.col("minutes").sum().alias("minutes"),
-                pl.col("position").first().alias("position")
-            ])
-            .with_columns([
-                (pl.col("assists") - pl.col("xAG")).alias("assists_minus_xag"),
-                ((pl.col("assists") - pl.col("xAG")) / pl.col("minutes") * 90).alias("assists_minus_xag_90")
-            ])
-            .filter(
-                (pl.col("minutes") > 450) &
-                (pl.col("xAG") > 0)
-            )
-        )
+        # Agregar dados usando pandas
+        stats = df.groupby(['league', 'team', 'player']).agg({
+            'matches': 'sum',
+            'assists': 'sum',
+            'xAG': 'sum',
+            'minutes': 'sum',
+            'position': 'first'
+        }).reset_index()
+        
+        # Calcular métricas derivadas
+        stats['assists_minus_xag'] = stats['assists'] - stats['xAG']
+        stats['assists_minus_xag_90'] = (stats['assists'] - stats['xAG']) / stats['minutes'] * 90
+        
+        # Filtrar
+        stats = stats[
+            (stats['minutes'] > 450) &
+            (stats['xAG'] > 0)
+        ]
         
         return stats
         
@@ -184,15 +182,15 @@ def load_data():
         st.error(f"Erro ao processar dados: {e}")
         return None
 
-def format_dataframe(df_polars, columns_to_show):
+def format_dataframe(df_pd, columns_to_show):
     """Formatar DataFrame para exibição"""
-    df_pd = df_polars.select(columns_to_show).to_pandas()
+    df_display = df_pd[columns_to_show].copy()
     
     # Arredondar valores numéricos
-    numeric_cols = df_pd.select_dtypes(include=['float64', 'float32']).columns
-    df_pd[numeric_cols] = df_pd[numeric_cols].round(2)
+    numeric_cols = df_display.select_dtypes(include=['float64', 'float32']).columns
+    df_display[numeric_cols] = df_display[numeric_cols].round(2)
     
-    return df_pd
+    return df_display
 
 @st.cache_data
 def convert_df_to_csv(df):
