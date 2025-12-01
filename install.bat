@@ -28,22 +28,29 @@ echo.
 
 REM Atualizar pip
 echo Atualizando pip...
-python -m pip install --upgrade pip
+python -m pip install --upgrade pip wheel setuptools
 
 echo.
 
-REM Instalar dependencias (com fallback para wheels)
-echo Instalando dependencias...
-echo Tentando instalar pacotes pre-compilados...
+REM Instalar dependencias APENAS com wheels pre-compiladas
+echo Instalando dependencias (usando pacotes pre-compilados)...
+echo.
 
-REM Tentar instalar com wheels primeiro
-pip install --only-binary :all: --upgrade wheel setuptools 2>nul
-pip install soccerdata pandas matplotlib openpyxl plotly streamlit
+REM Forcar uso de wheels - NUNCA compilar do codigo fonte
+pip install --prefer-binary --only-binary=lxml,pyarrow,pandas,numpy soccerdata pandas matplotlib openpyxl plotly streamlit
 
 if %errorlevel% neq 0 (
     echo.
-    echo Instalacao normal falhou, tentando metodo alternativo...
-    pip install --no-cache-dir soccerdata pandas matplotlib openpyxl plotly streamlit
+    echo ===================================
+    echo AVISO: Instalacao com wheels falhou
+    echo Tentando sem lxml e pyarrow...
+    echo ===================================
+    echo.
+    
+    REM Instalar sem lxml/pyarrow (soccerdata vai instalar depois)
+    pip install pandas matplotlib openpyxl plotly streamlit
+    pip install soccerdata --no-deps
+    pip install beautifulsoup4 html5lib requests PySocks Unidecode cloudscraper rich undetected-chromedriver
 )
 
 echo.
@@ -52,7 +59,12 @@ echo Instalacao concluida!
 echo.
 echo Para executar:
 echo   1. Clique em run.bat
-echo   2. Aguarde carregar
+echo   2. Aguarde carregar (5-10 min primeira vez)
 echo   3. Abra: http://localhost:8501
 echo ===================================
+echo.
+echo NOTA: Se aparecer erro de lxml,
+echo instale Visual C++ Build Tools:
+echo https://visualstudio.microsoft.com/visual-cpp-build-tools/
+echo.
 pause

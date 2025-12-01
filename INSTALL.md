@@ -16,12 +16,22 @@
    - Fazer download do ZIP ou clonar: `git clone https://github.com/gustavoeguedes/soccerdata.git`
 
 2. **Instalar**:
+   
+   **Opção A - Instalação Normal (recomendado):**
    - Clique duplo em `install.bat`
    - Aguarde instalação das dependências
+   
+   **Opção B - SEM Visual Studio C++ (se a Opção A falhar):**
+   - Clique duplo em `install_sem_build.bat`
+   - Usa pacotes pré-compilados (pula lxml/pyarrow problemáticos)
 
 3. **Executar**:
    - Clique duplo em `run.bat`
    - Aguarde abrir o navegador em `http://localhost:8501`
+
+**⚠️ Se aparecer erro "Microsoft Visual C++ 14.0 required":**
+- Use `install_sem_build.bat` OU
+- Instale Build Tools: https://visualstudio.microsoft.com/visual-cpp-build-tools/
 
 ---
 
