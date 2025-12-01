@@ -76,7 +76,7 @@ st.markdown("""
 # FUNÇÕES AUXILIARES
 # ============================================================================
 
-@st.cache_data(show_spinner=False, ttl=3600)  # Cache por 1 hora
+@st.cache_data(show_spinner=False, ttl=0)  # ttl=0 desabilita cache, sempre recarrega
 def load_data():
     """Carregar e processar dados do FBref"""
     

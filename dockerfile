@@ -1,32 +1,32 @@
-FROM python:3.10-bullseye
+FROM python:3.11-slim
 
 # Instalar dependências do sistema
 RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
     git \
-    python3-distutils \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Instalar dependências Python necessárias (SEM Selenium/Chrome)
-RUN pip install --no-cache-dir \
-    soccerdata \
-    pandas \
-    polars \
-    numpy \
-    pyarrow \
-    matplotlib \
-    openpyxl \
-    streamlit \
-    plotly
+# Copiar requirements primeiro para aproveitar cache do Docker
+COPY requirements.txt .
 
-# Copiar o teu código para dentro da imagem
+# Instalar dependências Python
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Copiar todo o código
 COPY . .
 
-# Diretório para outputs
-RUN mkdir -p /app/out
+# Criar diretório para cache do soccerdata
+RUN mkdir -p /app/cache
 
-# Comando padrão
-CMD ["python", "app.py"]
+# Expor porta do Streamlit
+EXPOSE 8501
+
+# Health check
+HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
+
+# Comando padrão: executar Streamlit
+CMD ["python", "-m", "streamlit", "run", "streamlit_app.py", "--server.address=0.0.0.0", "--server.port=8501", "--server.headless=true"]
