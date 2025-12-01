@@ -26,10 +26,25 @@ call venv\Scripts\activate.bat
 echo Ambiente virtual ativado
 echo.
 
-REM Instalar dependencias
-echo Instalando dependencias...
+REM Atualizar pip
+echo Atualizando pip...
 python -m pip install --upgrade pip
-pip install -r requirements.txt
+
+echo.
+
+REM Instalar dependencias (com fallback para wheels)
+echo Instalando dependencias...
+echo Tentando instalar pacotes pre-compilados...
+
+REM Tentar instalar com wheels primeiro
+pip install --only-binary :all: --upgrade wheel setuptools 2>nul
+pip install soccerdata pandas matplotlib openpyxl plotly streamlit
+
+if %errorlevel% neq 0 (
+    echo.
+    echo Instalacao normal falhou, tentando metodo alternativo...
+    pip install --no-cache-dir soccerdata pandas matplotlib openpyxl plotly streamlit
+)
 
 echo.
 echo ===================================
