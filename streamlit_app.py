@@ -76,10 +76,23 @@ st.markdown("""
 # FUNÇÕES AUXILIARES
 # ============================================================================
 
-@st.cache_data(show_spinner=False, ttl=0)  # ttl=0 desabilita cache, sempre recarrega
+@st.cache_data(show_spinner=False, ttl=300)  # ttl=300 segundos = 5 minutos
 def load_data():
     """Carregar e processar dados do FBref"""
     
+    # PRIORIDADE 1: Tentar carregar do CSV (mais rápido e confiável)
+    csv_file = Path('fbref_data.csv')
+    if csv_file.exists():
+        try:
+            st.info("📂 Carregando dados do arquivo local (fbref_data.csv)...")
+            df = pd.read_csv(csv_file)
+            st.success(f"✅ Dados carregados: {len(df):,} jogadores")
+            return df
+        except Exception as e:
+            st.warning(f"⚠️ Erro ao ler CSV local: {e}")
+            st.info("Tentando carregar do FBref...")
+    
+    # PRIORIDADE 2: Carregar do FBref (online)
     # Configuração completa - Big 5 Leagues
     LEAGUES = [
         'ENG-Premier League',

@@ -57,14 +57,79 @@ python app.py
 
 ## 🐳 Docker
 
+### WSL Ubuntu (Recomendado)
+
 ```bash
+# Build da imagem
+./docker-build.sh
+
+# Executar container
+./docker-run.sh
+
+# Acessar: http://localhost:8501
+
+# Parar container
+./docker-stop.sh
+```
+
+**Veja [DOCKER_WSL.md](DOCKER_WSL.md) para guia completo de instalação e configuração no WSL Ubuntu.**
+
+### Docker Manual
+
+```bash
+# Build
 docker build -t soccerdata-app .
-docker run --rm -p 8501:8501 -v $(pwd):/app soccerdata-app streamlit run streamlit_app.py --server.address=0.0.0.0
+
+# Run
+docker run -d --name soccerdata-dashboard -p 8501:8501 soccerdata-app
+
+# Stop
+docker stop soccerdata-dashboard
+```
+
+### Docker Compose
+
+```bash
+# Build e executar
+docker-compose up -d
+
+# Parar
+docker-compose down
 ```
 
 ## 📊 Dados
 
-Dados obtidos via web scraping do **FBref.com** usando a biblioteca `soccerdata`.
+### Sistema Híbrido: CSV + FBref Live
+
+O dashboard usa um **sistema inteligente de carregamento**:
+
+1. **Prioridade 1 - CSV Local** (Rápido): Se existir `fbref_data.csv`, carrega instantaneamente
+2. **Prioridade 2 - FBref Online** (Lento): Se CSV não existir, faz scraping do FBref
+
+### Atualizar Dados
+
+Para obter dados frescos do FBref:
+
+**Linux/Mac:**
+```bash
+./update_data.sh
+```
+
+**Windows:**
+```cmd
+update_data.bat
+```
+
+O script irá:
+- ✅ Fazer scraping do FBref
+- ✅ Gerar novo `fbref_data.csv`
+- ✅ Indicar como atualizar o Docker
+
+### Por que CSV?
+
+- **Docker/Cloud**: FBref bloqueia requisições de containers/cloud → CSV resolve
+- **Performance**: Carregar CSV (1s) vs scraping FBref (5-10min)
+- **Confiabilidade**: Não depende de conexão/disponibilidade do FBref
 
 **Ligas incluídas:**
 - 🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League (Inglaterra)
@@ -77,4 +142,6 @@ Dados obtidos via web scraping do **FBref.com** usando a biblioteca `soccerdata`
 
 ## ⚠️ Nota
 
-O carregamento inicial pode demorar alguns minutos devido ao scraping do FBref. Os dados são cacheados após o primeiro carregamento.
+- **Primeira execução**: Se CSV não existir, scraping do FBref pode demorar 5-10 minutos
+- **Docker**: Sempre use CSV (FBref bloqueia containers)
+- **Atualização**: Execute `update_data.sh`/`.bat` mensalmente para dados frescos

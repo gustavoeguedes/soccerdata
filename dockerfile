@@ -16,7 +16,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copiar todo o código
+# Copiar todo o código (incluindo fbref_data.csv se existir)
 COPY . .
 
 # Criar diretório para cache do soccerdata

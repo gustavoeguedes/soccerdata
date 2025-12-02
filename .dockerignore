@@ -7,13 +7,15 @@ __pycache__/
 *.pyd
 .Python
 
-# Outputs
+# Outputs (exceto fbref_data.csv que é necessário)
 out/
-*.csv
 *.xlsx
 *.png
 *.jpg
 *.pdf
+
+# Importante: Não ignorar fbref_data.csv
+# *.csv  <- COMENTADO para permitir fbref_data.csv
 
 # Ambiente virtual
 venv/
